@@ -1,4 +1,3 @@
-
 import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -27,7 +26,7 @@ export const session = pgTable("session", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
-}); 
+});
 
 export const account = pgTable("account", {
   id: text("id").primaryKey(),
