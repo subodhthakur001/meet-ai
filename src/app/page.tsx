@@ -30,8 +30,7 @@ export default function Home() {
         }
       );
     } catch (err: any) {
-      // In case the SDK throws outside onError
-      window.alert(err?.message ?? "Something went wrong");
+     
     }
   }
 
