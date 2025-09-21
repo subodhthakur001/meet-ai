@@ -3,12 +3,17 @@ import { Card , CardContent} from "@/components/ui/card"
 import {email, z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import Link from "next/link";
+
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { OctagonAlertIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
     email : z.string().email(),
@@ -16,6 +21,10 @@ const formSchema = z.object({
 });
 
 export const SignInView = () => {
+    const router = useRouter();
+    const[error, setError] = useState<string | null >(null);
+    const[pending, setPending] = useState<boolean>(false);
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -23,12 +32,34 @@ export const SignInView = () => {
             password: ""
         }
     });
+
+    const OnSubmit = (data : z.infer<typeof formSchema>) => {
+        setError(null);
+        setPending(true);
+        authClient.signIn.email(
+            {
+                email: data.email,
+                password : data.password
+            },
+            {
+                onSuccess: () => {
+                    setPending(false);
+                    router.push("/");
+                },
+                onError : ({error}) => {
+                    setPending(false);
+                    setError(error.message);
+                }
+            }
+        )
+        
+    }
     return (
         <div className="flex flex-col gap-6">
             <Card className="overflow-hidden p-0">
             <CardContent className="grid p-0 md:grid-cols-2">
                 <Form {...form}>
-                    <form className="p-6 md:p-8">
+                    <form onSubmit={form.handleSubmit(OnSubmit)} className="p-6 md:p-8">
                         <div className="flex flex-col gap-6">
                             <div className="flex flex-col items-center text-center">
                                 <h1 className="text-2xl font-bold">
@@ -60,7 +91,7 @@ export const SignInView = () => {
                                 <div className="grid gap-3">
                                     <FormField
                                     control={form.control}
-                                    name="email"
+                                    name="password"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Password</FormLabel>
@@ -76,13 +107,13 @@ export const SignInView = () => {
                                     )}
                                     />
                                 </div>
-                                {true && (
+                                {!!error && (
                             <Alert className="bg-destructive/10 border-none">
                                 <OctagonAlertIcon className="w-4 h-4 !text-destructive"/>
-                                <AlertTitle>Error</AlertTitle>
+                                <AlertTitle>{error}</AlertTitle>
                             </Alert>
                         )}
-                        <Button type="submit" className="w-full">Sign In</Button>  
+                        <Button type="submit" disabled={pending} className="w-full">Sign In</Button>  
                         <div className="after:border-border relative text-center text-sm after:absolute
                         after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                             <span className="bg-card text-muted-foreground relative z-10 px-2">
@@ -90,10 +121,10 @@ export const SignInView = () => {
                             </span>
                         </div> 
                         <div className="grid grid-cols-2 gap-4">
-                            <Button variant="outline" type="button" className="w-full">
+                            <Button variant="outline" type="button" disabled={pending} className="w-full">
                                 Google
                             </Button>
-                             <Button variant="outline" type="button" className="w-full">
+                             <Button variant="outline" type="button" disabled={pending} className="w-full">
                                 Github
                             </Button>
                         </div>
@@ -117,6 +148,12 @@ export const SignInView = () => {
                 </div>
             </CardContent>
             </Card>
+            <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs
+            text-balance *:[a]:underline *:[a]:underline-offset-4">
+                By Clicking continue, you agree to our <a href="#">Terms and Conditions</a> and <a href="#">
+                    Privacy Policy
+                </a>
+            </div>
         </div>
         
     )
