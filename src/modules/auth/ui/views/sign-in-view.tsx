@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { OctagonAlertIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const formSchema = z.object({
     email : z.string().email(),
@@ -95,7 +96,13 @@ export const SignInView = () => {
                              <Button variant="outline" type="button" className="w-full">
                                 Github
                             </Button>
-                        </div> 
+                        </div>
+                        <div className="text-center text-sm">
+                            Don&apos;t have an account? {}
+                            <Link href="/sign-up" className="underline underline-offset-4">
+                            Sign up
+                            </Link>
+                        </div>
                         </div>
                         
                     </form>
