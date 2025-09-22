@@ -4,6 +4,7 @@ import {email, z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
+import { FaGoogle, FaGithub } from "react-icons/fa";
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -131,7 +132,10 @@ export const SignInView = () => {
                             disabled={pending} 
                             className="w-full">
                                 Google
+                                 <FaGoogle/>
                             </Button>
+                           
+                            
                              <Button variant="outline" 
                              type="button"
                              onClick={() => {
@@ -142,7 +146,9 @@ export const SignInView = () => {
                               disabled={pending} 
                               className="w-full">
                                 Github
+                                 <FaGithub/>
                             </Button>
+                           
                         </div>
                         <div className="text-center text-sm">
                             Don&apos;t have an account? {}
