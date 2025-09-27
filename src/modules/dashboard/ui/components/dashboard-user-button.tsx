@@ -1,4 +1,5 @@
 import { Avatar } from "@/components/ui/avatar";
+import { GeneratedAvatar } from "@/components/ui/generated-avatar";
 import { authClient } from "@/lib/auth-client";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
@@ -18,7 +19,13 @@ const DashboardUserButton = () => {
                 <Avatar>
                     <AvatarImage src={data.user.image}/>
                 </Avatar>
-            ) : null
+            ) : (
+                <GeneratedAvatar
+                seed={data.user.name}
+                variant="initials"
+                className="size-9 mr-3"
+                />
+            )
           }
             </DropdownMenuTrigger>
         </DropdownMenu>
