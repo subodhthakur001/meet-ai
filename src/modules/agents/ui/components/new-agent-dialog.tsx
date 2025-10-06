@@ -1,5 +1,6 @@
 import ResponsiveDialog from "@/components/ui/responsive-dialog"
 import { Dispatch, SetStateAction } from "react"
+import { AgentForm } from "./agents-form"
 
 interface NewAgentDialogProps{
     open : boolean,
@@ -15,7 +16,9 @@ export const NewAgentDialog = ({
         description="Create a new Agent"
         open={open}
         onOpenChange={onOpenChange}>
-        New Agent form
+        <AgentForm
+        isSuccess={() => onOpenChange(false)}
+        isCancel={() => onOpenChange(false)}/>
         </ResponsiveDialog>
     )
 

@@ -6,8 +6,9 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { AgentsInsertSchema } from "../../schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form } from "@/components/ui/form";
+import { Form , FormField, FormItem, FormLabel, FormControl} from "@/components/ui/form";
 import { GeneratedAvatar } from "@/components/ui/generated-avatar";
+import { Input } from "@/components/ui/input";
 
 interface AgentsFormProps{
     isSuccess?: () => void,
@@ -59,6 +60,17 @@ export const AgentForm = ({
                 className="border size-16"
                 />
             </form>
+            <FormField
+            name="name"
+            control={form.control}
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                        <Input {...field}/>
+                    </FormControl>
+                </FormItem>
+            )}/>
         </Form>
     )
 
