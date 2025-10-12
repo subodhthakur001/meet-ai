@@ -9,6 +9,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form , FormField, FormItem, FormLabel, FormControl} from "@/components/ui/form";
 import { GeneratedAvatar } from "@/components/ui/generated-avatar";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface AgentsFormProps{
     isSuccess?: () => void,
@@ -22,13 +25,25 @@ export const AgentForm = ({
     intialValues
 } : AgentsFormProps) => {
     const trpc = useTRPC();
-    const router = useRouter();
     const queryClient = useQueryClient();
 
     const createAgent = useMutation(
         trpc.agents.create.mutationOptions({
-            onSuccess: () => {},
-            onError: () => {},
+            onSuccess: async() => {
+                await queryClient.invalidateQueries(
+                    trpc.agents.getMany.queryOptions(),
+                )
+
+                if(intialValues?.id){
+                    await queryClient.invalidateQueries(
+                        trpc.agents.getOne.queryOptions({id: intialValues.id})
+                    )
+                }
+                isSuccess?.();
+            },
+            onError: (error) => {
+                toast.message(error.message)
+            },
         }),
     )
 
@@ -59,7 +74,6 @@ export const AgentForm = ({
                 variant="botttsNeutral"
                 className="border size-16"
                 />
-            </form>
             <FormField
             name="name"
             control={form.control}
@@ -67,10 +81,39 @@ export const AgentForm = ({
                 <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                        <Input {...field}/>
+                        <Input {...field} placeholder="e.g. Math tutor"/>
                     </FormControl>
                 </FormItem>
             )}/>
+            <FormField
+            name="instructions"
+            control={form.control}
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Instructions</FormLabel>
+                    <FormControl>
+                        <Textarea {...field} 
+                        placeholder="You are a helpful math assistant that can answer questions and help with 
+                        assignment"/>
+                    </FormControl>
+                </FormItem>
+            )}/>
+            <div className="flex justify-between gap-x-2">
+                {isCancel && (
+                    <Button
+                    variant="ghost"
+                    disabled={isPending}
+                    type="button"
+                    onClick={() => isCancel()}>
+                        Cancel
+                    </Button>
+                )}
+                <Button disabled={isPending} type="submit">
+                    {isEdit ? "Update" : "Create"}
+                </Button>
+
+            </div>
+            </form>  
         </Form>
     )
 
