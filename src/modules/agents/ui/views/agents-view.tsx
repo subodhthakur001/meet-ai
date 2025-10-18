@@ -11,7 +11,7 @@ import EmptyState from "@/components/ui/empty-state";
 
 const AgentsView = () => {
     const trpc = useTRPC();
-    const {data} = useSuspenseQuery(trpc.agents.getMany.queryOptions());
+    const {data} = useSuspenseQuery(trpc.agents.getMany.queryOptions({}));
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
  
     return (
