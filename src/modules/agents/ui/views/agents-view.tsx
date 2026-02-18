@@ -1,8 +1,6 @@
 "use client"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { useTRPC } from "@/trpc/client"
-import ResponsiveDialog from "@/components/ui/responsive-dialog";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { DataTable } from "../components/data-table";
 import { columns } from "../components/columns";
