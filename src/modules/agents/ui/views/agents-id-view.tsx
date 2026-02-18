@@ -1,10 +1,12 @@
 "use client"
 import { useTRPC } from "@/trpc/client";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { AgentIdViewHeader } from "../components/agents-id-view-header";
 import { GeneratedAvatar } from "@/components/ui/generated-avatar";
 import { Badge } from "@/components/ui/badge";
 import { VideoIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner"
 
 interface Props {
     agentId: string
@@ -12,8 +14,23 @@ interface Props {
 
 const AgentIdView = ({ agentId } : Props) => {
     const trpc = useTRPC();
+    const queryClient = useQueryClient();
+    const router = useRouter();
 
     const { data } = useSuspenseQuery(trpc.agents.getOne.queryOptions({ id: agentId }));
+    // procedure calling 
+    const removedAgent = useMutation(
+        trpc.agents.remove.mutationOptions({
+            onSuccess: async () => {
+                await queryClient.invalidateQueries(trpc.agents.getMany.queryOptions({}))
+
+                router.push("/agents")
+            },
+            onError: (error) => {
+                toast.error(error.message)
+            }
+        })
+    );
 
     return (
         <div className="flex-1 py-4 px-4 md:px-8 flex flex-col gap-y-4">
@@ -21,7 +38,7 @@ const AgentIdView = ({ agentId } : Props) => {
             agentId={agentId}
             agentName={data.name}
             onEdit={() => {}}
-            onRemove={() => {}}/>
+            onRemove={() => removedAgent.mutate({id: agentId})}/>
             <div className="bg-white rounded-lg border">
                 <div className="px-4 py-5 gap-y-5 flex flex-col col-span-5">
                     <div className="flex items-center gap-x-3">
