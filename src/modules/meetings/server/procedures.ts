@@ -5,6 +5,7 @@ import { TRPCError } from "@trpc/server";
 import z from "zod";
 import { and, count, desc, eq, getTableColumns, ilike, sql } from "drizzle-orm";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, MIN_PAGE_SIZE } from "@/constants";
+import { MeetingsInsertSchema } from "../schema";
 
 
 export const meetingsRouter = createTRPCRouter({
@@ -116,13 +117,13 @@ export const meetingsRouter = createTRPCRouter({
     // await new Promise((resolve) => setTimeout(resolve, 5000));
     // throw new TRPCError({code : "BAD_REQUEST"})
     }),
-    // create: protectedProcedure
-    // .input(AgentsInsertSchema)
-    // .mutation(async ({input, ctx}) => {
-    //     const [createdAgent] = await db
-    //     .insert(agents)
-    //     .values({...input, userId: ctx.auth.user.id})
-    //     .returning();
-    //     return createdAgent;
-    // }) 
+    create: protectedProcedure
+    .input(MeetingsInsertSchema)
+    .mutation(async ({input, ctx}) => {
+        const [createdMeeting] = await db
+        .insert(meetings)
+        .values({...input, userId: ctx.auth.user.id})
+        .returning();
+        return createdMeeting;
+    }) 
 })
